@@ -1,32 +1,50 @@
 plugins {
-    kotlin("jvm") version "1.8.20" apply false
-    kotlin("plugin.spring") version "1.8.20" apply false
-    id("org.springframework.boot") version "3.1.0" apply false
-    id("io.spring.dependency-management") version "1.1.0" apply false
+	kotlin("jvm") version "1.9.25"
+	kotlin("plugin.spring") version "1.9.25"
+	id("org.springframework.boot") version "3.4.3"
+	id("io.spring.dependency-management") version "1.1.7"
+	kotlin("plugin.jpa") version "1.9.25"
 }
 
-allprojects {
-    group = "nanu.swdg"
-    version = "1.0-SNAPSHOT"
+group = "nanu.swdg"
+version = "0.0.1-SNAPSHOT"
 
-    repositories {
-        mavenCentral()
-    }
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
 
-subprojects {
-    apply {
-        plugin("org.jetbrains.kotlin.jvm")
-    }
+repositories {
+	mavenCentral()
+}
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
-        }
-    }
+dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-graphql")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.springframework:spring-webflux")
+	testImplementation("org.springframework.graphql:spring-graphql-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.addAll("-Xjsr305=strict")
+	}
+}
+
+allOpen {
+	annotation("jakarta.persistence.Entity")
+	annotation("jakarta.persistence.MappedSuperclass")
+	annotation("jakarta.persistence.Embeddable")
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
 }

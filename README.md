@@ -1,1 +1,0 @@
-# starpick-server
